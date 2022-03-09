@@ -1,0 +1,62 @@
+﻿@using Areas.Identity.Data;
+@using Microsoft.AspNetCore.Identity;
+
+@inject UserManager<SnackisUser> _userManager;
+
+@code {
+    [Parameter]
+    public Models.Group Group { get; set; }
+
+    [Parameter]
+    public SnackisUser CurrentUser { get; set; }
+
+    [Parameter]
+    public bool NameIsLink { get; set; }
+
+    SnackisUser member;
+    SnackisUser creator;
+}
+
+
+
+<p hidden>@(creator = _userManager.Users.FirstOrDefault(u => u.Id == Group.UserId))</p>
+
+<div class="col">
+    <div class="row">
+        @if (NameIsLink)
+        {
+        <a href="/GM/GMDiscussion?GroupId=@Group.Id">@Group.Name</a>
+        }
+        else
+        {
+            <h5>@Group.Name</h5>
+        }
+
+        @if (Group.UserId == CurrentUser.Id)
+        {
+            <a class="ml-3" href="/GM/EditGroup?GroupEditId=@Group.Id">Ändra</a>
+        }
+    </div>
+    <p class="mb-0">Skapad av: @creator.UserName</p>
+    <h6 class="mb-0">Medlemmar</h6>
+    @foreach (var membership in Group.Memberships)
+    {
+        if (membership.UserId != Group.UserId)  //Skaparen av gruppen visas inte i medlemslistan
+        {
+            member = _userManager.Users.FirstOrDefault(u => u.Id == membership.UserId);
+
+            <div class="row pl-3">
+                <p class="mb-0">@member.UserName</p>
+                @if (membership.IsAccepted)
+                {
+                    <p class="mb-0 ml-3">Accepterat</p>
+                }
+                else
+                {
+                    <p class="mb-0 ml-3">Har ännu inte accepterat</p>
+                }
+            </div>
+        }
+    }
+
+</div>

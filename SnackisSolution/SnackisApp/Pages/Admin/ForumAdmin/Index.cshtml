@@ -1,0 +1,74 @@
+﻿@page
+@model SnackisApp.Pages.Admin.ForumAdmin.IndexModel
+@{ Layout = "_Layout";
+                ViewData["Title"] = "Admin"; }
+
+
+
+<h4>Skapa nytt ämne</h4>
+
+<div class="col">
+    <div class="row">
+        <form method="post">
+            <div class="form-group">
+                <label asp-for="Subject.Name"></label>
+                <input asp-for="Subject.Name" class="form-control" />
+                <span asp-validation-for="Subject.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Spara ämne" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@if (Model.Subjects.Count > 0)
+{
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Subjects[0].Name)
+            </th>
+            <th></th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+        @foreach (var subject in Model.Subjects)
+        {
+@if (subject.Name != "Gruppmeddelande")
+{
+
+
+@if (subject.Posts.Count != 0)
+{
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => subject.Name)
+    </td>
+    <td>
+        Ämnet kan inte ändras eller raderas eftersom det har inlägg
+    </td>
+</tr> }
+                        else
+                        {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => subject.Name)
+    </td>
+    <td>
+        <a asp-page="./SubjectEdit" asp-route-SubjectEditId="@subject.Id">Ändra</a> |
+        <a asp-page="./SubjectDelete" asp-route-SubjectDeleteId="@subject.Id">Radera</a> |
+        <a asp-page="./PostsView" asp-route-SubjectId="@subject.Id">Hantera inlägg</a>
+    </td>
+</tr>}}}
+        <tr><td></td><td></td></tr>
+
+    </tbody>
+</table>}
+
+
+
